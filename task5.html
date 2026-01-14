@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weather App</title>
+
+<style>
+:root{
+  --bg:#020617;
+  --card:#0f172a;
+  --accent:#38bdf8;
+  --text:#e5e7eb;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg,#020617,#1e293b);
+  color:var(--text);
+}
+
+.weather-card{
+  background:var(--card);
+  padding:30px;
+  width:320px;
+  border-radius:18px;
+  box-shadow:0 25px 50px rgba(0,0,0,.6);
+  text-align:center;
+}
+
+.weather-card h1{
+  margin-bottom:15px;
+  color:var(--accent);
+}
+
+.search{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.search input{
+  flex:1;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+}
+
+.search button{
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:var(--accent);
+  color:#020617;
+  cursor:pointer;
+}
+
+.temp{
+  font-size:3rem;
+  margin:10px 0;
+}
+
+.condition{
+  text-transform:capitalize;
+  color:#cbd5f5;
+}
+
+.extra{
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+}
+
+.box{
+  background:#020617;
+  padding:10px;
+  border-radius:10px;
+  width:45%;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="weather-card">
+  <h1>Weather App</h1>
+
+  <div class="search">
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="getWeather()">Search</button>
+  </div>
+
+  <h2 id="location">---</h2>
+  <div class="temp" id="temperature">--°C</div>
+  <div class="condition" id="condition">---</div>
+
+  <div class="extra">
+    <div class="box">Humidity<br><b id="humidity">--%</b></div>
+    <div class="box">Wind<br><b id="wind">-- km/h</b></div>
+  </div>
+</div>
+
+<script>
+const apiKey = "YOUR_API_KEY";
+
+async function getWeather(){
+  const city = document.getElementById("city").value;
+  if(city === "") return alert("Enter a city name");
+
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+  try{
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if(data.cod !== 200){
+      alert("City not found");
+      return;
+    }
+
+    document.getElementById("location").textContent = data.name;
+    document.getElementById("temperature").textContent = `${Math.round(data.main.temp)}°C`;
+    document.getElementById("condition").textContent = data.weather[0].description;
+    document.getElementById("humidity").textContent = `${data.main.humidity}%`;
+    document.getElementById("wind").textContent = `${data.wind.speed} km/h`;
+
+  }catch(error){
+    alert("Error fetching weather data");
+  }
+}
+</script>
+
+</body>
+</html>
